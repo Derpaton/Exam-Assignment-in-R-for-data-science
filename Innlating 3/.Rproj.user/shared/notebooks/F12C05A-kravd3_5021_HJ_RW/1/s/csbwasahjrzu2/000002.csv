@@ -1,4 +1,0 @@
-"0","```r
-# mod <- lm(lifeExp ~ gdpPercap, data = gapminder_6)
-# summary(mod)
-```"
