@@ -55,6 +55,8 @@ gapminder
 - is it a tibble?
 - how many levels are there in the factor variables `country` and `continent`?
 
+    Her
+
 ```{r}
 str(gapminder)
 ```
