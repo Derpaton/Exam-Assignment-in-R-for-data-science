@@ -80,6 +80,8 @@ country
 
 > e) use a pipe to summarise how many distinct `country, year` and number of observations `n` there are for each continent. Your result should include the variables `continent, countries, years` and `n` with five rows of summarised statistics - one row for each continent.
 
+    TEST
+
 ```{r}
 
 
