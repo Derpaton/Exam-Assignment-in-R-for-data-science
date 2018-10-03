@@ -62,8 +62,7 @@ str(gapminder)
 > c) use `distinct()` to show the distinct values of the variable `country`.
 
 ```{r}
-
-
+distinct(gapminder)
 
 ```
 
