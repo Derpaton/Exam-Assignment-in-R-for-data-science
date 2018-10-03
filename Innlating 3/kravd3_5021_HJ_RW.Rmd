@@ -74,17 +74,16 @@ n_distinct(gapminder$country)
 > d) use a pipe of `gapminder` to show the distinct countries sorted by the continents. Your results should include the two variables `country` and `continent` with 142 rows of observations.
 
 ```{r}
-country <- n_distinct(gapminder)
-country
+gapminder %>%
+  group_by(continent) %>%
+  distinct(country) %>%
+  arrange(continent)
 ```
 
 > e) use a pipe to summarise how many distinct `country, year` and number of observations `n` there are for each continent. Your result should include the variables `continent, countries, years` and `n` with five rows of summarised statistics - one row for each continent.
 
-    TEST
 
 ```{r}
-
-
 
 ```
 
