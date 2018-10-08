@@ -84,7 +84,9 @@ gapminder %>%
 
 
 ```{r}
-
+gapminder %>%
+  group_by(continent) %>%
+  summarise(years = n_distinct(year), countries = n_distinct(country), n = n())
 ```
 
 
@@ -92,9 +94,9 @@ gapminder %>%
 
 
 ```{r}
-
-
-
+ggplot(gapminder)+
+  geom_histogram(mapping = aes(x = lifeExp), binwidth = 5)+
+  facet_wrap(~continent)
 ```
 
 
@@ -105,51 +107,53 @@ gapminder %>%
 
 
 ```{r}
-
-
-
+gapminder %>%
+  group_by(continent) %>%
+  summarise(n = n(), min = min(lifeExp), q1 = quantile(lifeExp, 0.25), median = median(lifeExp), q3 = quantile(lifeExp, 0.75), max = max(lifeExp), IQR = IQR(lifeExp), mean = mean(lifeExp), sd = sd(lifeExp))
 ```
 
 > b) make a boxplot of the life expectance `lifeExp` in `gapminder` for each continent by using `x = continent` and `y = lifeExp`.
 
 
 ```{r}
-
-
-
+ggplot(data = gapminder)+
+  geom_boxplot(mapping = aes(x = continent, y = lifeExp))
 ```
 
 > c) modify the boxplot of `y = lifeExp` in `gapminder` by using `fct_reorder()`to modify the factor order of ` x = continent` to correspond to increasing `lifeExp` (median) and label the x-axis "continent".
 
 ```{r}
-
-
-
+ggplot(gapminder) +
+  geom_boxplot(mapping = aes(fct_reorder(continent,lifeExp,median), y = lifeExp))+
+  xlab("continent")
+  
 ```
 
 > d) now only for the countries in "Americas", make a boxplot of `x = country` and `y = lifeExp` in `gapminder` and again using `fct_reorder()`to modify the factor order of `x = country` to correspond to increasing `lifeExp` (median). Use `coord_flip()` to get the country names horizontal on the y-axsis that you label "country".
 
 
 ```{r}
-
-
-
+americas <- gapminder %>%
+  filter(continent == "Americas")
+  ggplot(americas) +
+  geom_boxplot(mapping = aes(fct_reorder(country, lifeExp, median), y = lifeExp))+
+  xlab("country")
 ```
 
 > e) now only for the countries in "Europe", make a similar boxplot of `x = country` and `y = lifeExp` in `gapminder` and again using `fct_reorder()`to modify the factor order of `x = country` to correspond to increasing `lifeExp` (median). Use `coord_flip()` to get the country names horizontal on the y-axsis that you label "country".
 
 ```{r}
-
-
-
+europe <- gapminder %>%
+  filter(continent == "Europe")
+  ggplot(europe) +
+  geom_boxplot(mapping = aes(fct_reorder(country, lifeExp, median), y = lifeExp))+
+  xlab("country")
 ```
 
 > f) now, only consider the nordic countries "Denmark", "Finland", "Iceland", "Norway", "Sweden", together with "Ireland" and make a boxplot of `x = country` and `y = lifeExp` in `gapminder`still using `fct_reorder()`to modify the factor order of `x = country` to correspond to increasing `lifeExp` (median). Label the x-axsis "country".
 
 
 ```{r}
-
-
 
 ```
 
@@ -160,16 +164,12 @@ gapminder %>%
 
 ```{r}
 
-
-
 ```
 
 > b) again, consider the countries "Denmark", "Finland", "Iceland", "Norway", "Sweden", "Ireland". Make a qq-plot for the `lifeExp` data in `gapminder` using `stat_qq()` and also add lines using `stat_qq_line()`. Your plot should use `facet_wrap` by variable `country`.
 
 
 ```{r}
-
-
 
 ```
 
