@@ -191,8 +191,17 @@ ggplot(nordic, mapping = aes(sample = lifeExp)) +
 
 > c) considering the six: boxplots in 2f), rows in table 3a) and qq-plots in 3b), do you think these six distributions of `lifeExp` are: normal (symmetric), nearly-normal (slight/moderate skew) or far from the normal distribution (strong skew)?
 
+    According to the table in 3a, it is to say that the mean and median are close, and that indicates that
+    these distributions are normal.
+    In Denmark and Ireland, there might be a little bit of visible skew, according to the boxplots in 2f.
+    The qq-plots in 3b follow the line fairly well, while there is a little bit of systematic skew, where
+    the data deviates above from the line in the low range, and below from the line in the high range. This
+    is mostly the case in Finland, Iceland, Norway and Sweden. When drawing according conclusion according
+    to these factors, we conclude that these distributions are nearly-normal.
 
 > d) assuming independence of the observations in `gapminder` consider if the remaining conditions for using the two-sample `t.test()` are fulfilled for the variable `lifeExp` for the countries "Denmark" and "Ireland". If ok, proceed to perform a two-sample `t.test()` in order to test if the sample means are equal for these two countries.
+
+    Because that the conditions for using the two-sample t.test() are met we will do at t.test on the data set
 
 ```{r}
 denmark <- gapminder %>%
@@ -204,7 +213,8 @@ t.test(denmark$lifeExp,ireland$lifeExp)
 ```
 > 
 - is the null hypothesis of the test rejected and why/why not?
-
+    Because the p-value is higher than 0.05 the null hypothesis is not rejected
+    
 > e) use `power.t.test()` to compute the power of the two sample `t.test()` in 3d) assuming a minimum effect size `delta = 3.15`, `sd = 3`, `sig.level = 0.05` and `n = 12` in each group. 
 
 ```{r}
@@ -218,15 +228,19 @@ power.t.test(n = 12,delta = 3.15, sd = 3, sig.level = 0.05)
 ```{r}
 power.t.test(delta = 3.15, sd = 3, sig.level = 0.05, power = 0.7)
 
+power.t.test(delta = 3.15, sd = 3, sig.level = 0.05, power = 0.8)
 
+power.t.test(delta = 3.15, sd = 3, sig.level = 0.05, power = 0.9)
 ```
 >
 - repeat your calculations for the effect size `delta = 1`. 
 
 ```{r}
+power.t.test(delta = 1, sd = 3, sig.level = 0.05, power = 0.7)
 
+power.t.test(delta = 1, sd = 3, sig.level = 0.05, power = 0.8)
 
-
+power.t.test(delta = 1, sd = 3, sig.level = 0.05, power = 0.9)
 ```
 >
 - without making the two sample `t.test()` or a power calculation, do you think you can detect the difference betwenn the mean of variable `lifeExp` in `gapminder` for Norway and Sweden using the two sample `t.test()`, and explain why/why not?
