@@ -147,14 +147,20 @@ europe <- gapminder %>%
   filter(continent == "Europe")
   ggplot(europe) +
   geom_boxplot(mapping = aes(fct_reorder(country, lifeExp, median), y = lifeExp))+
-  xlab("country")
+  xlab("country") +
+  coord_flip()
 ```
 
 > f) now, only consider the nordic countries "Denmark", "Finland", "Iceland", "Norway", "Sweden", together with "Ireland" and make a boxplot of `x = country` and `y = lifeExp` in `gapminder`still using `fct_reorder()`to modify the factor order of `x = country` to correspond to increasing `lifeExp` (median). Label the x-axsis "country".
 
 
 ```{r}
-
+nordic_list = c("Denmark", "Finland", "Iceland", "Norway", "Sweden", "Ireland")
+nordic <- gapminder %>%
+  filter(country %in% nordic_list)
+ggplot(nordic) +
+  geom_boxplot(mapping = aes(fct_reorder(country, lifeExp, median), y = lifeExp))+
+  xlab("country")
 ```
 
 
@@ -163,14 +169,24 @@ europe <- gapminder %>%
 > a) make a pipe of `gapminder` to filter on the countries "Denmark", "Finland", "Iceland", "Norway", "Sweden", "Ireland" and summarise for variable `lifeExp`: `n`, `min`, `q1`, `median`, `q3`, `max`, `IQR`, `mean`, `sd`. Your result should be 10 columns of variables (`country`, `n`, `min`, `q1`, `median`, `q3`, `max`, `IQR`, `mean`, `sd`) with six rows of summarised statistics - one row for each country (tip: you can either use `summarise` or `summarise_at` in your pipe).
 
 ```{r}
-
+nordic_list = c("Denmark", "Finland", "Iceland", "Norway", "Sweden", "Ireland")
+nordic <- gapminder %>%
+  filter(country %in% nordic_list) %>%
+  group_by(country) %>%
+  summarise(n = n(), min = min(lifeExp), q1 = quantile(lifeExp, 0.25), median = median(lifeExp), q3 = quantile(lifeExp, 0.75), max = max(lifeExp), IQR = IQR(lifeExp), mean = mean(lifeExp), sd = sd(lifeExp))
+nordic
 ```
 
 > b) again, consider the countries "Denmark", "Finland", "Iceland", "Norway", "Sweden", "Ireland". Make a qq-plot for the `lifeExp` data in `gapminder` using `stat_qq()` and also add lines using `stat_qq_line()`. Your plot should use `facet_wrap` by variable `country`.
 
 
 ```{r}
-
+nordic <- gapminder %>%
+  filter(country %in% nordic_list)
+ggplot(nordic, mapping = aes(sample = lifeExp)) +
+  stat_qq() +
+  stat_qq_line()+
+  facet_wrap(~country)
 ```
 
 > c) considering the six: boxplots in 2f), rows in table 3a) and qq-plots in 3b), do you think these six distributions of `lifeExp` are: normal (symmetric), nearly-normal (slight/moderate skew) or far from the normal distribution (strong skew)?
@@ -179,8 +195,11 @@ europe <- gapminder %>%
 > d) assuming independence of the observations in `gapminder` consider if the remaining conditions for using the two-sample `t.test()` are fulfilled for the variable `lifeExp` for the countries "Denmark" and "Ireland". If ok, proceed to perform a two-sample `t.test()` in order to test if the sample means are equal for these two countries.
 
 ```{r}
-
-
+denmark <- gapminder %>%
+  filter(country %in% "Denmark")
+ireland <- gapminder %>%
+  filter(country %in% "Ireland")
+t.test(denmark$lifeExp,ireland$lifeExp)
 
 ```
 > 
@@ -189,8 +208,7 @@ europe <- gapminder %>%
 > e) use `power.t.test()` to compute the power of the two sample `t.test()` in 3d) assuming a minimum effect size `delta = 3.15`, `sd = 3`, `sig.level = 0.05` and `n = 12` in each group. 
 
 ```{r}
-
-
+power.t.test(n = 12,delta = 3.15, sd = 3, sig.level = 0.05)
 
 ```
 
@@ -198,7 +216,7 @@ europe <- gapminder %>%
 > f) use `power.t.test()` to compute the sample size needed `n` in each group of the two sample `t.test()` assuming a minimum effect size `delta = 3.15`, `sd = 3`, `sig.level = 0.05` for `power = 0.7, 0.8`, and `0.9`, respectively. 
 
 ```{r}
-
+power.t.test(delta = 3.15, sd = 3, sig.level = 0.05, power = 0.7)
 
 
 ```
@@ -227,18 +245,19 @@ europe <- gapminder %>%
 
 
 ```{r}
-
-
-
+countryfilter = c("Iceland", "Sweden" , "Austria", "Norway", "Denmark", "France")
+gapminder_6 <- gapminder %>%
+  filter(country %in% countryfilter)
+ggplot(gapminder_6, mapping = aes(x = gdpPercap, y = lifeExp))+
+  geom_point()+
+  stat_smooth(method = lm)
 ```
 
 > b) run the code shown below to create a model object `mod` for the linear model and to output the model summary.
 
 ```{r}
-
-# mod <- lm(lifeExp ~ gdpPercap, data = gapminder_6)
-# summary(mod)
-
+mod <- lm(lifeExp ~ gdpPercap, data = gapminder_6)
+summary(mod)
 ```
 >
 The “Residuals:” in the summary-output can be used as a fast check for the distribution assumption.
