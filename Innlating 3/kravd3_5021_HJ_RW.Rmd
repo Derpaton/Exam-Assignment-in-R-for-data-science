@@ -280,9 +280,7 @@ The “Residuals:” in the summary-output can be used as a fast check for the d
 - finally, show the quality-parameters of `mod` in a tidy format by using `broom::glance`.
 
 ```{r}
-
-
-
+broom::glance(mod)
 ```
 
 
@@ -290,34 +288,31 @@ The “Residuals:” in the summary-output can be used as a fast check for the d
 > b)  create `mod_au` to add model residuals, predictions etc. for each data point for the model `mod` by using `bromm::augment` (tip: use `mod` as the first argument and `gapminder_6` as the second argument to keep the original data). List the output of `mod_au`.
 
 ```{r}
-
-
-
+mod_au <- broom::augment(mod, gapminder_6)
+mod_au
 ```
 
 > c) create these three plots:
  - a scatterplot graphic of`x = gdpPercap` and `y = .resid` from `mod_au` to get a residuals-plot.
  
 ```{r}
-
-
-
+ggplot(data = mod_au,mapping = aes( x=gdpPercap, y = .resid))+
+  geom_point()
 ```
 >
 - a boxplot of `y = .resid` from `mod_au` to get a residuals-boxplot (tip: use `x = “mod_au”`).
 
 ```{r}
-
-
-
+ggplot(data = mod) +
+  geom_boxplot(mapping = aes(y = .resid, x = "mod_au"))
 ```
 > 
 - create a qq-plot with `sample = .resid` from `mod_au`.
 
 ```{r}
-
-
-
+ggplot(mod_au, mapping = aes(sample = .resid)) +
+  stat_qq() +
+  stat_qq_line()
 ```
 > 
 - based on your "Residuals:" section, these 3 plots and the sample size, is the model-assumption for the residuals (reasonably) fulfilled?
@@ -325,9 +320,9 @@ The “Residuals:” in the summary-output can be used as a fast check for the d
 > d) create a scatterplot of `x = gdpPercap` and `y = lifeExp` in `gapminder_6`, that you created in a). Also, add a best fit linear regression line `stat_smooth(method = lm)` that you in this case facet by variable country (you get six linear models).
 
 ```{r}
-
-
-
+ggplot(gapminder_6, mapping = aes(x = gdpPercap, y = lifeExp))+
+  geom_point()+
+  stat_smooth(method = lm)
 ```
 
 > e) 
@@ -335,8 +330,8 @@ The “Residuals:” in the summary-output can be used as a fast check for the d
 
 
 ```{r}
-
-
+quality_6 <- gapminder_6 %>%
+  group_by(broom::glance(lm(lifeExp ~ gdpPercap, data=.)))
 
 ```
 > 
@@ -386,9 +381,8 @@ The “Residuals:” in the summary-output can be used as a fast check for the d
 - when imported, output `results`.
 
 ```{r}
-
-
- 
+results <- read_csv(file = "results.csv", col_types = cols(date = col_date(format = "%Y-%m-%d")))
+results
 ```
 > b) save in `UEFI` a filter of `results` to only include:
 - `tournament` "UEFA Euro qualification", "FIFA World Cup qualification", and 
@@ -396,9 +390,9 @@ The “Residuals:” in the summary-output can be used as a fast check for the d
 - output `UEFI`.
 
 ```{r}
-
-
-
+UEFI <- results %>%
+  filter(tournament == "UEFA Euro qualification" | tournament == "FIFA World Cup qualification" & date <= 1989-12-31)
+UEFI
 ```
 
 > c)  save in object `UEFI_home` a pipe of `UEFI` through a filter on:
@@ -424,7 +418,7 @@ The “Residuals:” in the summary-output can be used as a fast check for the d
 ```
 
 > e) combine `UEFI_away` and `UEFI_home` into `UEFI_games` including all rows from both.
-- make a scatterplot of `x = date` and `y = score` in `UEFI_games` with smoothed linear curve (method = 'lm') and facet on variable `team`, so you get one scatterplot with a linear curve per team.
+- make a scatterplot of `x = date` and `y = score` in `UEFI_games` with smoothed linear curve (method = 'lm') and filter on variable `team`, so you get one scatterplot with a linear curve per team.
 
 ```{r}
 
