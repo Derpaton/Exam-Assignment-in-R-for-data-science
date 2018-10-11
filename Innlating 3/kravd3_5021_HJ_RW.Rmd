@@ -392,7 +392,7 @@ results
 ```{r}
 UEFI <- results %>%
   filter(tournament == "UEFA Euro qualification" | tournament == "FIFA World Cup qualification") %>%
-  filter(date <= as.Date("1989-12-31"))
+  filter(date >= as.Date("1989-12-31"))
 UEFI
 ```
 
@@ -402,10 +402,17 @@ UEFI
 - output `UEFI_home`.
 
 ```{r}
-
-
+teamfilter <- c("Faroe Islands", "Iceland", "Denmark", "Germany")
+UEFI_home <- UEFI %>%
+  filter(home_team == teamfilter)%>%
+  mutate(score = home_score - away_score, team = home_team, type = "home")
+UEFI_home
 
 ```
+
+
+
+
 
 > d)  save in object `UEFI_away` a pipe of `UEFI` through a filter on:
 - `away_team` "Faroe Islands", "Iceland", "Denmark", "Germany", then a mutate:
@@ -413,18 +420,21 @@ UEFI
 - output `UEFI_away`.
 
 ```{r}
-
-
-
+UEFI_away <- UEFI %>%
+  filter(away_team == teamfilter) %>%
+  mutate(score = away_score - home_score,team = away_team, type = "away")
+UEFI_away
 ```
 
 > e) combine `UEFI_away` and `UEFI_home` into `UEFI_games` including all rows from both.
 - make a scatterplot of `x = date` and `y = score` in `UEFI_games` with smoothed linear curve (method = 'lm') and filter on variable `team`, so you get one scatterplot with a linear curve per team.
 
 ```{r}
-
-
-
+UEFI_games <- rbind(UEFI_away, UEFI_home)
+ggplot(UEFI_games, mapping = aes(x = date, y = score))+
+  geom_point() +
+  filter(UEFI_games$team) +
+  stat_smooth(method = lm)
 ```
 > 
 - for each team, make your best judgement if these plots indicate any progress (dependence: none, weak, or strong) of the results with time, i.e. in the `score` variable versus the `date` variable.
@@ -433,7 +443,6 @@ UEFI
 > f) save in `home_away` a pipe of `UEFI_games` grouped by `team` and `type` to summarise: `n`, `loose (score < 0)`, ` draw (score == 0)` and ` win (score > 0)`, and the corresponding probabilities `p_lost`, `p_draw`, `p_win`. Your result should contain 9 columns: `team`, `type`, `n`, `loose`, `draw`, `win`, `p_lost`, `p_draw`, `p_win`and 8 rows of observations - two rows for each team. Output `home_away`.
 
 ```{r}
-
 
 
 ```
