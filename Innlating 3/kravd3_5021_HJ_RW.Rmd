@@ -55,7 +55,7 @@ gapminder
 - is it a tibble?
 - how many levels are there in the factor variables `country` and `continent`?
 
-    Her
+    
 
 ```{r}
 str(gapminder)
@@ -137,7 +137,8 @@ americas <- gapminder %>%
   filter(continent == "Americas")
   ggplot(americas) +
   geom_boxplot(mapping = aes(fct_reorder(country, lifeExp, median), y = lifeExp))+
-  xlab("country")
+  xlab("country")+
+  coord_flip()
 ```
 
 > e) now only for the countries in "Europe", make a similar boxplot of `x = country` and `y = lifeExp` in `gapminder` and again using `fct_reorder()`to modify the factor order of `x = country` to correspond to increasing `lifeExp` (median). Use `coord_flip()` to get the country names horizontal on the y-axsis that you label "country".
@@ -201,7 +202,12 @@ ggplot(nordic, mapping = aes(sample = lifeExp)) +
 
 > d) assuming independence of the observations in `gapminder` consider if the remaining conditions for using the two-sample `t.test()` are fulfilled for the variable `lifeExp` for the countries "Denmark" and "Ireland". If ok, proceed to perform a two-sample `t.test()` in order to test if the sample means are equal for these two countries.
 
-    Because that the conditions for using the two-sample t.test() are met we will do at t.test on the data set
+    A condition for a two sample t.test which tests for differences in mean, is that each sample mean must
+    separately satisfy the one-sample conditions for the t.distribution, whereof one is that we can relax
+    the normal requirement with an increasing sample size. Slight skew is tolerated for a sample size of      15.
+    However, we only have a sample size of 12 for each country, as there is one sample of lifeExp pr year.
+    With a sample size this small, we should have little to no skew. The validity of the test is therefore
+    dependent upon the skew, but we will do a t.test on the data set
 
 ```{r}
 denmark <- gapminder %>%
@@ -339,6 +345,24 @@ knitr::kable(quality_6, format = "pandoc", caption = "Quality of the linear mode
 > 
 - are the r-squared values for the six countries in your new table different, as compared with your previous r-squared value for the six countries in one group?
 
+```{r}
+r_sq <- mean(quality_6$r.squared)
+adjusted_r_sq <- mean(quality_6$adj.r.squared)
+r_sq
+adjusted_r_sq
+```
+    In the code block above, the mean of the 6 different countries is calculated for both R-squared and
+    Adjusted
+    R-squared. For the previous calculations, where the original R-squared calculations were given for the
+    individual countries in one group, the results were the following: 
+    
+    Multiple R-squared:  0.7326,	Adjusted R-squared: 0.7288
+    
+    According to this, it is evident that the values from the new table are different.
+    It is also worth noting, that all R-squared values (both adjusted and not) for the individual   
+    countries
+    are close to the mean.
+
 > f) use a pipe to create `country_au` from your `gapminder_6` by using `group_by`, `do` and `augment` to add model residuals, predictions etc. for each data point (belonging to a country) for the model `lm(lifeExp ~ gdpPercap, data=.)`. Output `country_au`.
 
 ```{r}
@@ -443,18 +467,17 @@ ggplot(UEFI_games, mapping = aes(x = date, y = score))+
 > 
 - for each team, make your best judgement if these plots indicate any progress (dependence: none, weak, or strong) of the results with time, i.e. in the `score` variable versus the `date` variable.
 
-    If we look at the linear curve we can see that Icelande, Germany and Faroe Islands have slight progress. 
-    If we then look at the linear curve of Denmark's progress, we see that there is a slight curve downwards indicating that they
-    are doing worsed 
+    If we look at the linear curve we can see that Icelande, Germany and Faroe Islands have slight
+    progress. 
+    If we then look at the linear curve of Denmark's progress, we see that there is a slight curve
+    downwards indicating that they are doing worse
     
 
 > f) save in `home_away` a pipe of `UEFI_games` grouped by `team` and `type` to summarise: `n`, `loose (score < 0)`, ` draw (score == 0)` and ` win (score > 0)`, and the corresponding probabilities `p_lost`, `p_draw`, `p_win`. Your result should contain 9 columns: `team`, `type`, `n`, `loose`, `draw`, `win`, `p_lost`, `p_draw`, `p_win`and 8 rows of observations - two rows for each team. Output `home_away`.
 
 ```{r}
-home_away <- UEFI_games %>%
-  group_by(team, type) %>% 
-  summarise(loose=(score < 0))
-home_away
+
+
 ```
 > 
 - at first glance (not doing any calculations nor tests), are the results `loose`, `draw` or `win` for Faroe Islands independent of the `type` variable (home and away)?
