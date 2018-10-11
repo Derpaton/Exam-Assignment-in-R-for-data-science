@@ -342,34 +342,35 @@ knitr::kable(quality_6, format = "pandoc", caption = "Quality of the linear mode
 > f) use a pipe to create `country_au` from your `gapminder_6` by using `group_by`, `do` and `augment` to add model residuals, predictions etc. for each data point (belonging to a country) for the model `lm(lifeExp ~ gdpPercap, data=.)`. Output `country_au`.
 
 ```{r}
-
-
-
+country_au <- gapminder_6 %>%
+  group_by(country)%>%
+  do(augment(lm(lifeExp ~ gdpPercap, data=.)))
+country_au
 ```
 > 
 - create these three plots:
 - a scatterplot graphic of`x = gdpPercap` and `y = .resid` from `country_au` to get a residuals-plot in six facets by country.
  
 ```{r}
-
-
-
+ggplot(country_au, mapping = aes(x = gdpPercap, y = .resid)) +
+  geom_point()+
+  facet_wrap(~country_au$country)
 ```
 >
 - a boxplot of `y = .resid` from `country_au` to get six residuals-boxplots in one plot (tip: use `x = country`).
 
 ```{r}
-
-
-
+ggplot(country_au) +
+  geom_boxplot(mapping = aes(y = .resid, x = country))
 ```
 > 
 - a qq-plot with `sample = .resid` from `country_au` in six facets by country.
 
 ```{r}
-
-
-
+ggplot(country_au, mapping = aes(sample = .resid))+
+  stat_qq()+
+  stat_qq_line()+
+  facet_wrap(~country)
 ```
 
 
@@ -406,7 +407,7 @@ UEFI
 ```{r}
 teamfilter <- c("Faroe Islands", "Iceland", "Denmark", "Germany")
 UEFI_home <- UEFI %>%
-  filter(home_team == teamfilter)%>%
+  filter(home_team %in% teamfilter)%>%
   mutate(score = home_score - away_score, team = home_team, type = "home")
 UEFI_home
 
@@ -423,7 +424,7 @@ UEFI_home
 
 ```{r}
 UEFI_away <- UEFI %>%
-  filter(away_team == teamfilter) %>%
+  filter(away_team %in% teamfilter) %>%
   mutate(score = away_score - home_score,team = away_team, type = "away")
 UEFI_away
 ```
@@ -442,6 +443,10 @@ ggplot(UEFI_games, mapping = aes(x = date, y = score))+
 > 
 - for each team, make your best judgement if these plots indicate any progress (dependence: none, weak, or strong) of the results with time, i.e. in the `score` variable versus the `date` variable.
 
+    If we look at the linear curve we can see that Icelande, Germany and Faroe Islands have slight progress. 
+    If we then look at the linear curve of Denmark's progress, we see that there is a slight curve downwards indicating that they
+    are doing worsed 
+    
 
 > f) save in `home_away` a pipe of `UEFI_games` grouped by `team` and `type` to summarise: `n`, `loose (score < 0)`, ` draw (score == 0)` and ` win (score > 0)`, and the corresponding probabilities `p_lost`, `p_draw`, `p_win`. Your result should contain 9 columns: `team`, `type`, `n`, `loose`, `draw`, `win`, `p_lost`, `p_draw`, `p_win`and 8 rows of observations - two rows for each team. Output `home_away`.
 
