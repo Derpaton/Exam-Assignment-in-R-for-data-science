@@ -391,7 +391,8 @@ results
 
 ```{r}
 UEFI <- results %>%
-  filter(tournament == "UEFA Euro qualification" | tournament == "FIFA World Cup qualification" & date <= 1989-12-31)
+  filter(tournament == "UEFA Euro qualification" | tournament == "FIFA World Cup qualification") %>%
+  filter(date <= as.Date("1989-12-31"))
 UEFI
 ```
 
