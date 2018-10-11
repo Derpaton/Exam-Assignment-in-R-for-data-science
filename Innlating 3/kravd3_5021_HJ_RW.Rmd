@@ -331,8 +331,10 @@ ggplot(gapminder_6, mapping = aes(x = gdpPercap, y = lifeExp))+
 
 ```{r}
 quality_6 <- gapminder_6 %>%
-  group_by(broom::glance(lm(lifeExp ~ gdpPercap, data=.)))
+  group_by(country)%>%
+  do(broom::glance(lm(lifeExp ~ gdpPercap, data=.))) 
 
+knitr::kable(quality_6, format = "pandoc", caption = "Quality of the linear modelling grouped by country", digits = 3)
 ```
 > 
 - are the r-squared values for the six countries in your new table different, as compared with your previous r-squared value for the six countries in one group?
@@ -431,10 +433,11 @@ UEFI_away
 
 ```{r}
 UEFI_games <- rbind(UEFI_away, UEFI_home)
+
 ggplot(UEFI_games, mapping = aes(x = date, y = score))+
   geom_point() +
-  filter(UEFI_games$team) +
-  stat_smooth(method = lm)
+  stat_smooth(method = lm)+
+  facet_wrap(~team)
 ```
 > 
 - for each team, make your best judgement if these plots indicate any progress (dependence: none, weak, or strong) of the results with time, i.e. in the `score` variable versus the `date` variable.
@@ -443,8 +446,10 @@ ggplot(UEFI_games, mapping = aes(x = date, y = score))+
 > f) save in `home_away` a pipe of `UEFI_games` grouped by `team` and `type` to summarise: `n`, `loose (score < 0)`, ` draw (score == 0)` and ` win (score > 0)`, and the corresponding probabilities `p_lost`, `p_draw`, `p_win`. Your result should contain 9 columns: `team`, `type`, `n`, `loose`, `draw`, `win`, `p_lost`, `p_draw`, `p_win`and 8 rows of observations - two rows for each team. Output `home_away`.
 
 ```{r}
-
-
+home_away <- UEFI_games %>%
+  group_by(team, type) %>% 
+  summarise(loose=(score < 0))
+home_away
 ```
 > 
 - at first glance (not doing any calculations nor tests), are the results `loose`, `draw` or `win` for Faroe Islands independent of the `type` variable (home and away)?
